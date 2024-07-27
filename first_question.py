@@ -1,48 +1,33 @@
-def min_subsequences(source: str, target: str) -> int:
-    from collections import defaultdict
-    import bisect
+from collections import defaultdict
+import bisect
 
-    # Map characters in source to their positions
+def min_subsequences(source: str, target: str) -> int:
+    # map source character position
     char_positions = defaultdict(list)
     for index, char in enumerate(source):
         char_positions[char].append(index)
 
-    # Check if all characters in target are in source
-    for char in target:
-        if char not in char_positions:
-            return -1
+    # Ensure character exist
+    if any(char not in char_positions for char in target):
+        return -1
 
     subseq_count = 0
     target_index = 0
-    n = len(target)
+    target_length = len(target)
     
-    while target_index < n:
+    while target_index < target_length:
         subseq_count += 1
-        current_position = -1
-        
-        while target_index < n:
+        current_pos = -1
+
+        while target_index < target_length:
             char = target[target_index]
             positions = char_positions[char]
-            pos = bisect.bisect_right(positions, current_position)
+            pos = bisect.bisect_right(positions, current_pos)
             
             if pos == len(positions):
-                break  # Need a new subsequence
+                break
             
-            current_position = positions[pos]
+            current_pos = positions[pos]
             target_index += 1
         
     return subseq_count
-
-# Example usage
-if __name__ == "__main__":
-    source = "abc"
-    target = "abcbc"
-    print(min_subsequences(source, target))  # Output: 2
-
-    source = "abc"
-    target = "acdbc"
-    print(min_subsequences(source, target))  # Output: -1
-
-    source = "xyz"
-    target = "xzyxz"
-    print(min_subsequences(source, target))  # Output: 3
